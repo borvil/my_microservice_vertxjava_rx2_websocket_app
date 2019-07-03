@@ -6,8 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="my_microservice_vertxjava_rx2_websocket_app" />
         <module name="mymicroservicevertxjava_rx2_websocket_app" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="mongo_vertx" target="1.11." />
+    </bytecodeTargetLevel>
   </component>
 </project>

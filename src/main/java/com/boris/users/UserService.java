@@ -6,12 +6,16 @@ import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
 import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class UserService extends AbstractVerticle {
 
 
     private IUserDAO userDAO;
+
+    private List<User> userList = new ArrayList<>();
 
     public UserService(IUserDAO userDAO) {
         this.userDAO = userDAO;
@@ -47,21 +51,34 @@ public class UserService extends AbstractVerticle {
             JsonObject payload = JsonObject.mapFrom(objectMessage.body());
             User user = Json.decodeValue(payload.toString(),User.class);
             String userId = UUID.randomUUID().toString();
-            user.setUserId(userId);
+            user.setId(userId);
             vertx.executeBlocking(future->userDAO.add(user),
                     result->System.out.println("Bike added"));
         });
 
-        eventBus.consumer("user.remove").handler(objectMessage -> {
-           JsonObject payload = JsonObject.mapFrom(objectMessage.body());
-           String userId = payload.getString("userId");
-
-           vertx.executeBlocking(future -> userDAO.remove(userId),asyncResult -> System.out.println("Bike removed"));
+        eventBus.consumer("users.remove").handler(message -> {
+            JsonObject payload = JsonObject.mapFrom(message.body());
+            String userId = payload.getString("user_id");
+            vertx.executeBlocking(future->userDAO.remove(userId),
+                    result->System.out.println("User removed"));
         });
 
         eventBus.consumer("users.list").handler(objectMessage -> {
             JsonObject payload = JsonObject.mapFrom(objectMessage.body());
-            vertx.executeBlocking(future -> userDAO.getUserList(), asyncResult -> System.out.println("List of users"));
+            vertx.executeBlocking(future->{
+                 userList = userDAO.getUserList();
+                if (userList==null){
+                    future.fail("The list is empty");
+                } else {
+                    future.complete(JsonObject.mapFrom(userList));
+                }
+            }, result->{
+                if (result.succeeded()){
+                    objectMessage.reply(result.result());
+                } else {
+                    objectMessage.fail(404, "Nothing found");
+                }
+            });
         });
     }
 

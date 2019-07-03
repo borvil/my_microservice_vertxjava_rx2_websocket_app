@@ -53,6 +53,22 @@
             <artifactId>rxjava</artifactId>
             <version>2.0.4</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.vertx/vertx-mongo-client -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-mongo-client</artifactId>
+            <version>3.7.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.vertx/vertx-hazelcast -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-hazelcast</artifactId>
+            <version>3.7.1</version>
+        </dependency>
+
+
+
+
     </dependencies>
 
 
